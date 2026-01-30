@@ -1,0 +1,86 @@
+services:
+  mongodb-stores:
+    image: mongo:6.0
+    container_name: mongodb-stores
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_stores_data:/data/db
+    networks:
+      - pet-store-network
+
+  mongodb-orders:
+    image: mongo:6.0
+    container_name: mongodb-orders
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongodb_orders_data:/data/db
+    networks:
+      - pet-store-network
+
+  pet-store1:
+    image: pet-store:assn4
+    build: ./pet_store
+    container_name: pet-store1
+    ports:
+      - "5001:5001"
+    expose:
+      - 5001
+    environment:
+      - MONGO_URI=mongodb://mongodb-stores:27017/
+      - DB_NAME=pet_store1
+      - PORT=5001
+    depends_on:
+      - mongodb-stores
+    volumes:
+      - ./images:/app/images
+    networks:
+      - pet-store-network
+
+  pet-store2:
+    image: pet-store:assn4
+    build: ./pet_store
+    container_name: pet-store2
+    ports:
+      - "5002:5001"
+    expose:
+      - 5001
+    environment:
+      - MONGO_URI=mongodb://mongodb-stores:27017/
+      - DB_NAME=pet_store2
+      - PORT=5001
+    depends_on:
+      - mongodb-stores
+    volumes:
+      - ./images:/app/images
+    networks:
+      - pet-store-network
+
+  pet-order:
+    image: pet-order:assn4
+    build: ./pet_order
+    container_name: pet-order
+    ports:
+      - "5003:5003"
+    expose:
+      - 5003
+    environment:
+      - MONGO_URI=mongodb://mongodb-orders:27017/
+      - PORT=5003
+      - PET_STORE1_URL=http://pet-store1:5001
+      - PET_STORE2_URL=http://pet-store2:5001
+    depends_on:
+      - mongodb-orders
+      - pet-store1
+      - pet-store2
+    networks:
+      - pet-store-network
+
+networks:
+  pet-store-network:
+    driver: bridge
+
+volumes:
+  mongodb_stores_data:
+  mongodb_orders_data:
