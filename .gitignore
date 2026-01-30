@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+
+images/
+
+.DS_Store
+
+# Artifacts created by CI locally
+assn4_test_results.txt
+log.txt
+response.txt
+images_assn4.tar
+
+.idea/
