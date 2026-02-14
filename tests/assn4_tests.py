@@ -136,8 +136,8 @@ def test_assn4_flow():
 
     # GET /pet-types/{id_6}/pets from store #2 contains pets with expected fields
     r = requests.get(f"{base_url(2)}/pet-types/{id_6}/pets", timeout=10)
-    # assert r.status_code == 200
-    assert r.status_code == 404
+    assert r.status_code == 200
+    # assert r.status_code == 404
     pets = r.json()
     assert isinstance(pets, list)
 
